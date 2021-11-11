@@ -11,9 +11,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@master
-      - name: Install requirements #安装依赖
-        run: |
-          pip install -r requirements.txt
       - name: Claim
         env:
           EG_AUTH_JSON: ${{ secrets.EG_AUTH_JSON }}
@@ -24,6 +21,9 @@ jobs:
         uses: actions/setup-python@v2.2.1
         with:
           python-version: 3.9
+      - name: Install requirements #安装依赖
+        run: |
+          pip install -r requirements.txt
       - name: Post to discord
         env:
           Discord_Webhook: ${{ secrets.Discord_Webhook }}
