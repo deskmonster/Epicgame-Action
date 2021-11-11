@@ -1,4 +1,4 @@
-name: EFC
+name: Batch
 on:
   workflow_dispatch:
   schedule:
