@@ -1,0 +1,26 @@
+name: EFC
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * 4"
+
+jobs:
+  EFC:
+    name: Claim Freebie
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Set up python
+        uses: actions/setup-python@v2.2.1
+        with:
+          python-version: 3.9
+      - name: Claim
+        env:
+          EG_AUTH_JSON: ${{ secrets.EG_AUTH_JSON }}
+          Discord_Webhook: ${{ secrets.Discord_Webhook }}
+        run: |
+          echo "$EG_AUTH_JSON" > $GITHUB_WORKSPACE/url.txt
+          wget -i $GITHUB_WORKSPACE/url.txt -P jobs
+          chmod +x "${GITHUB_WORKSPACE}/.github/script.sh"
+          "${GITHUB_WORKSPACE}/.github/script.sh"

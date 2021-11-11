@@ -1,0 +1,29 @@
+name: EFC
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * 4"
+
+jobs:
+  EFC:
+    name: Claim Freebie
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Claim
+        env:
+          EG_AUTH_JSON: ${{ secrets.EG_AUTH_JSON }}
+        run: |
+          echo "$EG_AUTH_JSON" > $GITHUB_WORKSPACE/device_auths.json
+          docker run --rm --pull always --volume "$GITHUB_WORKSPACE/device_auths.json:/app/data/device_auths.json" ghcr.io/jackblk/epicgames-freebies-claimer:latest > epic.log
+      - name: Set up python
+        uses: actions/setup-python@v2.2.1
+        with:
+          python-version: 3.9
+      - name: Post to discord
+        env:
+          Discord_Webhook: ${{ secrets.Discord_Webhook }}
+        run: |
+          python webhook_parser.py 
+          curl -H "Content-Type: application/json" -d@webhook.json $Discord_Webhook
