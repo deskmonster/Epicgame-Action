@@ -8,7 +8,9 @@ with open('epic.log', 'r') as log:
     log = log.readlines()
 # print(log)
 hook_content = []
-emoji = {'WARN': ':warning: ', 'INFO': ':information_source: '}
+emoji = {'WARN': ':warning: ', 'INFO': ':information_source: ',
+         'EMAIL': ':e_mail: ', 'SUCCESS': ':ballot_box_with_check:',
+         'ALREADY': ':interrobang: ', 'LEAVE': ':leaves: ', 'USER': ':video_game: '}
 index = []
 webhook_url = os.getenv('Discord_Webhook')
 for i in log[3:]:
@@ -16,7 +18,22 @@ for i in log[3:]:
     result = ansi_escape.sub('', i).strip().split('|')
     result = [i.strip() for i in result]
     try:
-        result = {'name': emoji[result[2]] + result[2], 'value': result[3]}
+        email = re.search(r'[A-Za-z0-9.+_-]+@[A-Za-z0-9._-]+', result[3])
+        user = re.search(r'(?<=Logged in as ).+?(?= )', result[3])
+        email = email.group(0) if email else None
+        user = user.group(0) if user else None
+        if email:
+            result = {'name': emoji['EMAIL'] + 'EMAIL', 'value': email, 'inline': True}
+        elif user:
+            result = {'name': emoji['USER'] + 'USER', 'value': user, 'inline': True}
+        elif 'was already claimed for this account' in result[3]:
+            result = {'name': emoji['ALREADY'] + 'ALREADY', 'value': result[3]}
+        elif 'Successfully claimed' in result[3]:
+            result = {'name': emoji['SUCCESS'] + 'SUCCESS', 'value': result[3]}
+        elif re.search('Logged .+? out of Epic Games', result[3]):
+            result = {'name': emoji['LEAVE'] + 'LEAVE', 'value': result[3]}
+        else:
+            result = {'name': emoji[result[2]] + result[2], 'value': result[3]}
     except IndexError:
         continue
     # print(result)
@@ -46,7 +63,7 @@ discord_hook = {
 for b in index:
     num = index.index(b)
     prev = 0 if num == 0 else index[num - 1]
-    discord_hook['embeds'][0]['fields'] = hook_content[prev:b + 1]
+    discord_hook['embeds'][0]['fields'] = hook_content[prev + 1:b + 1]
     # print(discord_hook['embeds'][0]['fields'])
     with open('webhook.json', 'w') as webhook:
         json.dump(discord_hook, webhook)
