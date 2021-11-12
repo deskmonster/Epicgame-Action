@@ -67,4 +67,5 @@ for b in index:
     # print(discord_hook['embeds'][0]['fields'])
     with open('webhook.json', 'w') as webhook:
         json.dump(discord_hook, webhook)
-    requests.post(webhook_url, json=discord_hook)
+    if webhook_url:
+        requests.post(webhook_url, json=discord_hook)
