@@ -9,7 +9,7 @@ with open('epic.log', 'r') as log:
 # print(log)
 hook_content = []
 emoji = {'WARN': ':warning: ', 'INFO': ':information_source: ',
-         'EMAIL': ':e_mail: ', 'SUCCESS': ':ballot_box_with_check:',
+         'EMAIL': ':e_mail: ', 'SUCCESS': ':ballot_box_with_check: ',
          'ALREADY': ':interrobang: ', 'LEAVE': ':leaves: ', 'USER': ':video_game: '}
 index = []
 webhook_url = os.getenv('Discord_Webhook')
